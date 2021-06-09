@@ -11,6 +11,7 @@ import os
 import random
 
 import numpy as np
+import pandas as pd
 import torch
 
 from torch.utils.data import DataLoader
@@ -298,6 +299,7 @@ def main(args):
         logging.info('learning_rate = %d' % current_learning_rate)
 
         training_logs = []
+        loss_file = {'positive_sample_loss': [], 'negative_sample_loss': [], 'loss': []}
         
         #Training Loop
         for step in range(init_step, args.max_steps):
@@ -305,6 +307,9 @@ def main(args):
             log = kge_model.train_step(kge_model, optimizer, train_iterator, args)
             
             training_logs.append(log)
+            loss_file['positive_sample_loss'].append(log['positive_sample_loss'])
+            loss_file['negative_sample_loss'].append(log['negative_sample_loss'])
+            loss_file['loss'].append(log['loss'])
             
             if step >= warm_up_steps:
                 current_learning_rate = current_learning_rate / 10
@@ -341,6 +346,9 @@ def main(args):
             'warm_up_steps': warm_up_steps
         }
         save_model(kge_model, optimizer, save_variable_list, args)
+        
+        df = pd.DataFrame(loss_file)
+        df.to_csv(os.path.join(args.save_path, 'loss.csv'))
         
     if args.do_valid:
         logging.info('Evaluating on Valid Dataset...')
