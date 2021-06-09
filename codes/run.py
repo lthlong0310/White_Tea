@@ -296,7 +296,7 @@ def main(args):
     # Set valid dataloader as it would be evaluated during training
     
     if args.do_train:
-        logging.info('learning_rate = %d' % current_learning_rate)
+        logging.info('learning_rate = %f' % current_learning_rate)
 
         training_logs = []
         loss_file = {'positive_sample_loss': [], 'negative_sample_loss': [], 'loss': []}
