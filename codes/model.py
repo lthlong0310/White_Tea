@@ -168,7 +168,7 @@ class KGEModel(nn.Module):
         else:
             score = (head + relation) - tail
 
-        score = self.gamma.item() - torch.norm(score, p=1, dim=2)
+        score = self.gamma.item() - torch.norm(score, p=2, dim=2)
         return score
 
     def DistMult(self, head, relation, tail, mode):
