@@ -300,6 +300,7 @@ def main(args):
 
         training_logs = []
         loss_file = {'positive_sample_loss': [], 'negative_sample_loss': [], 'loss': []}
+        metric_file = {'MRR': [], 'MR': [], 'HITS@1': [], 'HITS@3': [], 'HITS@10': []}
         
         #Training Loop
         for step in range(init_step, args.max_steps):
@@ -338,6 +339,11 @@ def main(args):
             if args.do_valid and step % args.valid_steps == 0:
                 logging.info('Evaluating on Valid Dataset...')
                 metrics = kge_model.test_step(kge_model, valid_triples, all_true_triples, args)
+                metric_file['MRR'].append(metrics['MRR'])
+                metric_file['MR'].append(metrics['MR'])
+                metric_file['HITS@1'].append(metrics['HITS@1'])
+                metric_file['HITS@3'].append(metrics['HITS@3'])
+                metric_file['HITS@10'].append(metrics['HITS@10'])
                 log_metrics('Valid', step, metrics)
         
         save_variable_list = {
@@ -347,8 +353,10 @@ def main(args):
         }
         save_model(kge_model, optimizer, save_variable_list, args)
         
-        df = pd.DataFrame(loss_file)
-        df.to_csv(os.path.join(args.save_path, 'loss.csv'))
+        df_loss = pd.DataFrame(loss_file)
+        df_loss.to_csv(os.path.join(args.save_path, 'loss.csv'))
+        df_metric = pd.DataFrame(metric_file)
+        df_metric.to_csv(os.path.join(args.save_path, 'metric.csv'))
         
     if args.do_valid:
         logging.info('Evaluating on Valid Dataset...')
