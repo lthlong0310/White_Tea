@@ -162,7 +162,7 @@ class KGEModel(nn.Module):
         
         return score
     
-     def normalize_embedding(self):
+    def normalize_embedding(self):
         self.entity_embedding.data.copy_(torch.renorm(input=self.entity_embedding.detach().cpu(),
                                                             p=2,
                                                             dim=0,
