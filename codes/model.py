@@ -162,16 +162,7 @@ class KGEModel(nn.Module):
         
         return score
     
-    def normalize_embedding(self):
-        self.entity_embedding.data.copy_(torch.renorm(input=self.entity_embedding.detach().cpu(),
-                                                            p=2,
-                                                            dim=0,
-                                                            maxnorm=1.0))
-        
-        self.relation_embedding.data.copy_(torch.renorm(input=self.relation_embedding.detach().cpu(),
-                                                            p=2,
-                                                            dim=0,
-                                                            maxnorm=1.0))
+
     
     def TransE(self, head, relation, tail, mode):
         if mode == 'head-batch':
@@ -275,8 +266,7 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
               
-        if model.model_name == 'TransE':
-            model.normalize_embedding()
+        
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
 
